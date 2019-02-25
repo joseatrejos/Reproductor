@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -28,11 +29,30 @@ namespace Reproductor
         // Nuestra comunicación con la tarjeta de sonido
         WaveOutEvent output;
 
+        DispatcherTimer timer;
 
         public MainWindow()
         {
             InitializeComponent();
             LlenarComboSalida();
+
+            // Inicializar el timer
+            timer = new DispatcherTimer();
+
+            // Definir el intervalo durante el cual se ejecutará cada hilo
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
+
+            // Establecer el proceso que se ejecutará
+            timer.Tick += Timer_Tick;
+
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (reader != null)
+            {
+                lbl_Tiempo_Actual.Text = reader.CurrentTime.ToString().Substring(0, 8);
+            }
         }
 
         private void LlenarComboSalida()
@@ -72,6 +92,7 @@ namespace Reproductor
 
                     output.DeviceNumber = cb_Salida.SelectedIndex;
 
+                    // Los rayitos(eventos) responden a funciones mediante el operador +=
                     output.PlaybackStopped += Output_PlaybackStopped;
                     
                     output.Init(reader);
@@ -81,8 +102,10 @@ namespace Reproductor
                     btn_Detener.IsEnabled = true;
                     btn_Reproducir.IsEnabled = false;
 
-                    lbl_Tiempo_Total.Text = reader.TotalTime.ToString().Substring(0,8);
+                    lbl_Tiempo_Total.Text = reader.TotalTime.ToString().Substring(0, 8);
                     lbl_Tiempo_Actual.Text = reader.CurrentTime.ToString().Substring(0, 8);
+
+                    timer.Start();
                 }
             }
         }
@@ -91,6 +114,7 @@ namespace Reproductor
         {
             reader.Dispose();
             output.Dispose();
+            timer.Stop();
         }
 
         private void btn_Pausa_Click(object sender, RoutedEventArgs e)
@@ -117,7 +141,7 @@ namespace Reproductor
 
         private void sld_Reproduccion_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            
         }
     }
 }
