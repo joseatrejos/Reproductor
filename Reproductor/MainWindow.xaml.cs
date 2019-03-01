@@ -30,7 +30,10 @@ namespace Reproductor
         WaveOutEvent output;
 
         DispatcherTimer timer;
-
+        VolumeSampleProvider volume;
+        FadeInOutSampleProvider fades;
+        bool fadingOut = false;
+        
         bool dragging = false;
 
         public MainWindow()
@@ -47,6 +50,7 @@ namespace Reproductor
             // Establecer el proceso que se ejecutará
             timer.Tick += Timer_Tick;
 
+            
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -94,14 +98,24 @@ namespace Reproductor
             {
                 if (txt_Direccion_Archivo.Text != "") { 
                     reader = new AudioFileReader(txt_Direccion_Archivo.Text);
+
+                    fades = new FadeInOutSampleProvider(reader, true);
+                    double milisegundosFadeIn = Double.Parse(txt_FadeIn.Text)*1000.0;
+                    fades.BeginFadeIn(milisegundosFadeIn);
+                    fadingOut = false;
+
                     output = new WaveOutEvent();
 
                     output.DeviceNumber = cb_Salida.SelectedIndex;
 
                     // Los rayitos(eventos) responden a funciones mediante el operador +=
                     output.PlaybackStopped += Output_PlaybackStopped;
+
+                    volume = new VolumeSampleProvider(reader);
+
+                    volume.Volume = (float)sld_Volumen.Value;
                     
-                    output.Init(reader);
+                    output.Init(volume);
                     output.Play();
 
                     btn_Pausa.IsEnabled = true;
@@ -146,19 +160,45 @@ namespace Reproductor
             btn_Reproducir.IsEnabled = true;
             btn_Pausa.IsEnabled = false;
             btn_Detener.IsEnabled = false;
+            txt_Direccion_Archivo.Text = "";
+            sld_Reproduccion.Value = 0;
+            lbl_Tiempo_Actual.Text = "00:00";
+            lbl_Tiempo_Total.Text = "00:00";
         }
         
-        private void sld_Reproduccion_DragStarted(object sender, RoutedEventArgs e)
+        private void sld_Reproduccion_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             dragging = true;
         }
 
-        private void sld_Reproduccion_DragCompleted(object sender, RoutedEventArgs e)
+        private void sld_Reproduccion_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             dragging = false;
-            if( (reader != null) && (output != null) && (output.PlaybackState != PlaybackState.Stopped) )
+            if( reader != null && output != null && (output.PlaybackState != PlaybackState.Stopped) )
             {
-                TimeSpan.FromSeconds(sld_Reproduccion.Value);
+                reader.CurrentTime = TimeSpan.FromSeconds(sld_Reproduccion.Value);
+            }
+        }
+
+        private void sld_Volumen_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (volume != null & output != null && output.PlaybackState != PlaybackState.Stopped)
+            {
+                volume.Volume = (float)sld_Volumen.Value;
+            }
+            if (lbl_Volumen_Cantidad != null)
+            {
+                lbl_Volumen_Cantidad.Text = ((int)(sld_Volumen.Value * 100)).ToString() + "%";
+            }
+        }
+
+        private void btn_FadeOut_Click(object sender, RoutedEventArgs e)
+        {
+            if(!fadingOut && fades!= null && output != null)
+            {
+                fadingOut = true;
+                double milisegundosFadeOut = Double.Parse(txt_FadeOut.Text) * 1000.0;
+                fades.BeginFadeOut(milisegundosFadeOut);
             }
         }
     }
