@@ -30,7 +30,7 @@ namespace Reproductor
         WaveOutEvent output;
 
         DispatcherTimer timer;
-        VolumeSampleProvider volume;
+        EfectoVolumen volume;
         FadeInOutSampleProvider fades;
         bool fadingOut = false;
         
@@ -111,9 +111,9 @@ namespace Reproductor
                     // Los rayitos(eventos) responden a funciones mediante el operador +=
                     output.PlaybackStopped += Output_PlaybackStopped;
 
-                    volume = new VolumeSampleProvider(reader);
+                    volume = new EfectoVolumen(fades);
 
-                    volume.Volume = (float)sld_Volumen.Value;
+                    //volume.Volume = (float)sld_Volumen.Value;
                     
                     output.Init(volume);
                     output.Play();
@@ -184,7 +184,7 @@ namespace Reproductor
         {
             if (volume != null & output != null && output.PlaybackState != PlaybackState.Stopped)
             {
-                volume.Volume = (float)sld_Volumen.Value;
+                //volume.Volume = (float)sld_Volumen.Value;
             }
             if (lbl_Volumen_Cantidad != null)
             {
