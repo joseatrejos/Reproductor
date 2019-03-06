@@ -49,8 +49,6 @@ namespace Reproductor
 
             // Establecer el proceso que se ejecutará
             timer.Tick += Timer_Tick;
-
-            
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -91,6 +89,7 @@ namespace Reproductor
             {
                 output.Play();
                 btn_Reproducir.IsEnabled = false;
+                btn_Elegir_Archivo.IsEnabled = false;
                 btn_Pausa.IsEnabled = true;
                 btn_Detener.IsEnabled = true;
             }
@@ -113,7 +112,7 @@ namespace Reproductor
 
                     volume = new EfectoVolumen(fades);
 
-                    //volume.Volume = (float)sld_Volumen.Value;
+                    volume.Volume = (float)sld_Volumen.Value;
                     
                     output.Init(volume);
                     output.Play();
@@ -121,6 +120,7 @@ namespace Reproductor
                     btn_Pausa.IsEnabled = true;
                     btn_Detener.IsEnabled = true;
                     btn_Reproducir.IsEnabled = false;
+                    btn_Elegir_Archivo.IsEnabled = false;
 
                     lbl_Tiempo_Total.Text = reader.TotalTime.ToString().Substring(0, 8);
                     lbl_Tiempo_Actual.Text = reader.CurrentTime.ToString().Substring(0, 8);
@@ -158,6 +158,7 @@ namespace Reproductor
             output.Stop();
 
             btn_Reproducir.IsEnabled = true;
+            btn_Elegir_Archivo.IsEnabled = true;
             btn_Pausa.IsEnabled = false;
             btn_Detener.IsEnabled = false;
             txt_Direccion_Archivo.Text = "";
@@ -184,7 +185,7 @@ namespace Reproductor
         {
             if (volume != null & output != null && output.PlaybackState != PlaybackState.Stopped)
             {
-                //volume.Volume = (float)sld_Volumen.Value;
+                volume.Volume = (float)sld_Volumen.Value;
             }
             if (lbl_Volumen_Cantidad != null)
             {

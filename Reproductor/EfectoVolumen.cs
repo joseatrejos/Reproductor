@@ -11,10 +11,33 @@ namespace Reproductor
     {
         private ISampleProvider fuente;
 
+        private float volume;
+        public float Volume
+        {
+            get
+            {
+                return volume;
+            }
+            set
+            {
+                volume = value;
+
+                if(volume > 1)
+                {
+                    volume = 1;
+                }
+                else if(volume< 1)
+                {
+                    volume = 0;
+                }
+            }
+        }
+
         public EfectoVolumen(ISampleProvider fuente)
         {
             // El de arriba = el parámetro
             this.fuente = fuente;
+            volume = 1;
         }
 
         // El WaveFormat conlleva: Bit Depth, Sample Rate y Channels
@@ -35,7 +58,7 @@ namespace Reproductor
             for (int i = 0; i < read; i++)
             {
                 // En caso de ocupar un offset, se considera sumandoselo a la variable 'i'
-                buffer[offset + i] *= 0.2f;
+                buffer[offset + i] *= volume;
             }
 
             return read;
