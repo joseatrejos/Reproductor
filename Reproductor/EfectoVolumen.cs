@@ -9,8 +9,6 @@ namespace Reproductor
 {
     class EfectoVolumen : ISampleProvider
     {
-        private ISampleProvider fuente;
-
         private float volume;
         public float Volume
         {
@@ -20,18 +18,22 @@ namespace Reproductor
             }
             set
             {
-                volume = value;
-
-                if(volume > 1)
-                {
-                    volume = 1;
-                }
-                else if(volume< 1)
+                if (value < 0)
                 {
                     volume = 0;
                 }
+                else if (value > 1)
+                {
+                    volume = 1;
+                }
+                else
+                {
+                    volume = value;
+                }
             }
         }
+
+        private ISampleProvider fuente;
 
         public EfectoVolumen(ISampleProvider fuente)
         {

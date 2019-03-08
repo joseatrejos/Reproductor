@@ -32,6 +32,8 @@ namespace Reproductor
         DispatcherTimer timer;
         EfectoVolumen volume;
         FadeInOutSampleProvider fades;
+        Delay delay;
+
         bool fadingOut = false;
         
         bool dragging = false;
@@ -98,7 +100,9 @@ namespace Reproductor
                 if (txt_Direccion_Archivo.Text != "") { 
                     reader = new AudioFileReader(txt_Direccion_Archivo.Text);
 
-                    fades = new FadeInOutSampleProvider(reader, true);
+                    delay = new Delay(reader);
+
+                    fades = new FadeInOutSampleProvider(delay, true);
                     double milisegundosFadeIn = Double.Parse(txt_FadeIn.Text)*1000.0;
                     fades.BeginFadeIn(milisegundosFadeIn);
                     fadingOut = false;
