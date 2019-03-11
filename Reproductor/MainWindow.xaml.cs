@@ -19,9 +19,6 @@ using NAudio.Wave.SampleProviders;
 
 namespace Reproductor
 {
-    /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         AudioFileReader reader;
@@ -35,7 +32,6 @@ namespace Reproductor
         Delay delay;
 
         bool fadingOut = false;
-        
         bool dragging = false;
 
         public MainWindow()
@@ -53,6 +49,7 @@ namespace Reproductor
             timer.Tick += Timer_Tick;
         }
 
+        // Time Functions
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (reader != null)
@@ -65,6 +62,7 @@ namespace Reproductor
             }
         }
 
+        // Inicializacón
         private void LlenarComboSalida()
         {
             cb_Salida.Items.Clear();
@@ -74,8 +72,10 @@ namespace Reproductor
                 cb_Salida.Items.Add(capacidades.ProductName);
             }
             cb_Salida.SelectedIndex = 0;
+            sld_Reproduccion.IsEnabled = false;
         }
 
+        // Botón Elegir Archivo
         private void btn_Elegir_Archivo_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -85,10 +85,12 @@ namespace Reproductor
             }
         }
 
+        // Boton Reproducir
         private void btn_Reproducir_Click(object sender, RoutedEventArgs e)
         {
             if (output != null && output.PlaybackState == PlaybackState.Paused)
             {
+                sld_Reproduccion.IsEnabled = true;
                 output.Play();
                 btn_Reproducir.IsEnabled = false;
                 btn_Elegir_Archivo.IsEnabled = false;
@@ -121,6 +123,7 @@ namespace Reproductor
                     output.Init(volume);
                     output.Play();
 
+                    sld_Reproduccion.IsEnabled = true;
                     btn_Pausa.IsEnabled = true;
                     btn_Detener.IsEnabled = true;
                     btn_Reproducir.IsEnabled = false;
@@ -137,13 +140,7 @@ namespace Reproductor
             }
         }
 
-        private void Output_PlaybackStopped(object sender, StoppedEventArgs e)
-        {
-            reader.Dispose();
-            output.Dispose();
-            timer.Stop();
-        }
-
+        // Botón Pausa
         private void btn_Pausa_Click(object sender, RoutedEventArgs e)
         {
             if (output != null)
@@ -153,14 +150,17 @@ namespace Reproductor
                 btn_Reproducir.IsEnabled = true;
                 btn_Pausa.IsEnabled = false;
                 btn_Detener.IsEnabled = true;
+                sld_Reproduccion.IsEnabled = true;
             }
 
         }
 
+        // Botón Detener
         private void btn_Detener_Click(object sender, RoutedEventArgs e)
         {
             output.Stop();
 
+            sld_Reproduccion.IsEnabled = false;
             btn_Reproducir.IsEnabled = true;
             btn_Elegir_Archivo.IsEnabled = true;
             btn_Pausa.IsEnabled = false;
@@ -170,12 +170,19 @@ namespace Reproductor
             lbl_Tiempo_Actual.Text = "00:00";
             lbl_Tiempo_Total.Text = "00:00";
         }
-        
+        // Time Function al Detener
+        private void Output_PlaybackStopped(object sender, StoppedEventArgs e)
+        {
+            reader.Dispose();
+            output.Dispose();
+            timer.Stop();
+        }
+
+        // Funciones de Drag del Slider de la Música
         private void sld_Reproduccion_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             dragging = true;
         }
-
         private void sld_Reproduccion_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             dragging = false;
@@ -185,6 +192,7 @@ namespace Reproductor
             }
         }
 
+        // Slider del Volumen (Applies Changes to the label)
         private void sld_Volumen_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (volume != null & output != null && output.PlaybackState != PlaybackState.Stopped)
@@ -197,6 +205,7 @@ namespace Reproductor
             }
         }
 
+        // Botón FadeOut
         private void btn_FadeOut_Click(object sender, RoutedEventArgs e)
         {
             if(!fadingOut && fades!= null && output != null)
@@ -205,6 +214,29 @@ namespace Reproductor
                 double milisegundosFadeOut = Double.Parse(txt_FadeOut.Text) * 1000.0;
                 fades.BeginFadeOut(milisegundosFadeOut);
             }
+        }
+
+        // CheckBox Delay (Enables/Disables the Slider)
+        private void ckb_Delay_Changed(object sender, RoutedEventArgs e)
+        {
+            if ((bool)ckb_Delay.IsChecked == true)
+                sld_Delay_Offset.IsEnabled = true;
+            else
+                sld_Delay_Offset.IsEnabled = false;
+        }
+        // Slider Delay (Applies Offset Changes to the label)
+        private void sld_Delay_Offset_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if ((bool)ckb_Delay.IsChecked == true)
+            {
+                lbl_Delay_Offset.Text = ((int)(sld_Delay_Offset.Value * 1000)).ToString() + " ms";
+            }
+        }
+
+        // Slider Gain (Applies Changes to the label)
+        private void sld_Gain_Cantidad_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            lbl_Gain_Cantidad.Text = ((float)(sld_Gain_Cantidad.Value)).ToString("F");
         }
     }
 }
