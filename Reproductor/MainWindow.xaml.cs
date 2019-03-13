@@ -33,6 +33,7 @@ namespace Reproductor
 
         bool fadingOut = false;
         bool dragging = false;
+        int estado = 0;
 
         public MainWindow()
         {
@@ -102,7 +103,10 @@ namespace Reproductor
                 if (txt_Direccion_Archivo.Text != "") { 
                     reader = new AudioFileReader(txt_Direccion_Archivo.Text);
 
+
                     delay = new Delay(reader);
+
+                    delay.Delay = (int)sld_Delay_Offset.Value;
 
                     fades = new FadeInOutSampleProvider(delay, true);
                     double milisegundosFadeIn = Double.Parse(txt_FadeIn.Text)*1000.0;
@@ -152,7 +156,6 @@ namespace Reproductor
                 btn_Detener.IsEnabled = true;
                 sld_Reproduccion.IsEnabled = true;
             }
-
         }
 
         // Botón Detener

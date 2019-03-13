@@ -9,18 +9,52 @@ namespace Reproductor
 {
     class Delay : ISampleProvider
     {
-        private ISampleProvider fuente;
-
         // Declaración de Variables
         private int tamañoBuffer;
         private int duracionBufferSegundos;
         private int cantidadMuestrasTranscurridas = 0;
         private int cantidadMuestrasBorradas = 0;
         private int cantidadMuestrasOffset = 0;
-        
-        public int OffsetMilisegundos { get; set; }
+
+        private int offsetMilisegundos;
+        public int OffsetMilisegundos
+        {
+            get
+            {
+                return offsetMilisegundos;
+            }
+            set
+            {
+
+                if (value < 0)
+                {
+                    offsetMilisegundos = 0;
+                }
+                else if (value > 3000)
+                {
+                    offsetMilisegundos = 3000;
+                }
+                else
+                {
+                    offsetMilisegundos = value;
+                }
+            }
+        }
+
+        private ISampleProvider fuente;
 
         private List<float> bufferDelay = new List<float>();
+        
+        public Delay(ISampleProvider fuente)
+        {
+            this.fuente = fuente;
+            offsetMilisegundos = 0;
+            duracionBufferSegundos = 10;
+            cantidadMuestrasOffset = (int)(((float)OffsetMilisegundos / 1000.0f) * (float)fuente.WaveFormat.SampleRate);
+
+            // Buffer   =         Muestras por segundo * Tiempo en segundos
+            tamañoBuffer = fuente.WaveFormat.SampleRate * duracionBufferSegundos; ;
+        }
 
         // El WaveFormat conlleva: Bit Depth, Sample Rate y Channels
         public WaveFormat WaveFormat
@@ -29,17 +63,6 @@ namespace Reproductor
             {
                 return fuente.WaveFormat;
             }
-        }
-
-        public Delay(ISampleProvider fuente)
-        {
-            this.fuente = fuente;
-            OffsetMilisegundos = 500;
-            duracionBufferSegundos = 10;
-            cantidadMuestrasOffset = (int)(((float)OffsetMilisegundos / 1000.0f) * (float)fuente.WaveFormat.SampleRate);
-
-            // Buffer   =         Muestras por segundo * Tiempo en segundos
-            tamañoBuffer = fuente.WaveFormat.SampleRate * duracionBufferSegundos;;
         }
 
         public int Read(float[] buffer, int offset, int count)
@@ -74,7 +97,7 @@ namespace Reproductor
             }
 
             // Aplicación del efecto
-            if(milisegundosTranscurridos > OffsetMilisegundos)
+            if(milisegundosTranscurridos > offsetMilisegundos)
             {
                 for(int i = 0; i < read; i ++)
                 {
