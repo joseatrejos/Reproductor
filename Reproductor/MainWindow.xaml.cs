@@ -102,11 +102,15 @@ namespace Reproductor
             {
                 if (txt_Direccion_Archivo.Text != "") { 
                     reader = new AudioFileReader(txt_Direccion_Archivo.Text);
-
-
+                    
                     delay = new Delay(reader);
 
-                    delay.Delay = (int)sld_Delay_Offset.Value;
+                    delay.OffsetMilisegundos = (int)sld_Delay_Offset.Value;
+
+                    if(sld_Delay_Offset.IsEnabled == true)
+                        delay.Activo = true;
+                    else
+                        delay.Activo = false;
 
                     fades = new FadeInOutSampleProvider(delay, true);
                     double milisegundosFadeIn = Double.Parse(txt_FadeIn.Text)*1000.0;
@@ -173,6 +177,7 @@ namespace Reproductor
             lbl_Tiempo_Actual.Text = "00:00";
             lbl_Tiempo_Total.Text = "00:00";
         }
+
         // Time Function al Detener
         private void Output_PlaybackStopped(object sender, StoppedEventArgs e)
         {
@@ -220,19 +225,24 @@ namespace Reproductor
         }
 
         // CheckBox Delay (Enables/Disables the Slider)
-        private void ckb_Delay_Changed(object sender, RoutedEventArgs e)
+        private void ckb_Delay_Clicked(object sender, RoutedEventArgs e)
         {
-            if ((bool)ckb_Delay.IsChecked == true)
-                sld_Delay_Offset.IsEnabled = true;
-            else
-                sld_Delay_Offset.IsEnabled = false;
+            if (delay!=null)
+                delay.Activo = (bool)ckb_Delay.IsChecked;
+
+            sld_Delay_Offset.IsEnabled = (bool)ckb_Delay.IsChecked;
         }
         // Slider Delay (Applies Offset Changes to the label)
         private void sld_Delay_Offset_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if ((bool)ckb_Delay.IsChecked == true)
             {
-                lbl_Delay_Offset.Text = ((int)(sld_Delay_Offset.Value * 1000)).ToString() + " ms";
+                lbl_Delay_Offset.Text = ((int)(sld_Delay_Offset.Value)).ToString() + " ms";
+            }
+
+            if(delay != null)
+            {
+                delay.OffsetMilisegundos = (int)sld_Delay_Offset.Value;
             }
         }
 

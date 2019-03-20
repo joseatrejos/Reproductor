@@ -35,10 +35,10 @@
         <TextBox x:Name="txt_FadeOut" HorizontalAlignment="Left" Height="23" Margin="178,247,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="0" TextAlignment="Right"/>
         <Button x:Name="btn_FadeOut" Content="Fade Out" HorizontalAlignment="Left" Margin="322,247,0,0" VerticalAlignment="Top" Width="81" RenderTransformOrigin="-0.013,0.65" Height="23" Click="btn_FadeOut_Click"/>
         <TextBlock x:Name="lbl_Delay"  HorizontalAlignment="Left" Margin="20,298,0,0" TextWrapping="Wrap" Text="Delay" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
-        <CheckBox x:Name="ckb_Delay" Content="Activo" HorizontalAlignment="Left" Margin="20,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,-2.4" Checked="ckb_Delay_Changed" Unchecked="ckb_Delay_Changed"/>
-        <Slider x:Name="sld_Delay_Offset"  HorizontalAlignment="Left" Margin="235,319,0,0" VerticalAlignment="Top" Width="146" ValueChanged="sld_Delay_Offset_ValueChanged" Maximum="3000" IsEnabled="False"/>
+        <CheckBox x:Name="ckb_Delay" Content="Activo" HorizontalAlignment="Left" Margin="20,319,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.549,-2.4" Click="ckb_Delay_Clicked"/>
+        <Slider x:Name="sld_Delay_Offset"  HorizontalAlignment="Left" Margin="235,319,0,0" VerticalAlignment="Top" Width="146" ValueChanged="sld_Delay_Offset_ValueChanged" Maximum="3000" IsEnabled="False" Value="500"/>
         <TextBlock x:Name="lbl_Offset"  HorizontalAlignment="Left" Margin="180,318,0,0" TextWrapping="Wrap" Text="Offset" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
-        <TextBlock x:Name="lbl_Delay_Offset" HorizontalAlignment="Left" Margin="291,342,0,0" TextWrapping="Wrap" Text="0 ms" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
+        <TextBlock x:Name="lbl_Delay_Offset" HorizontalAlignment="Left" Margin="291,342,0,0" TextWrapping="Wrap" Text="500 ms" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
         <Slider x:Name="sld_Gain_Cantidad"  HorizontalAlignment="Left" Margin="486,319,0,0" VerticalAlignment="Top" Width="146" ValueChanged="sld_Gain_Cantidad_ValueChanged" Maximum="1"/>
         <TextBlock x:Name="lbl_Gain"  HorizontalAlignment="Left" Margin="443,318,0,0" TextWrapping="Wrap" Text="Gain" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
         <TextBlock x:Name="lbl_Gain_Cantidad" HorizontalAlignment="Left" Margin="555,342,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" RenderTransformOrigin="0.644,-3.759"/>
