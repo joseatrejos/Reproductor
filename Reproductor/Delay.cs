@@ -16,11 +16,6 @@ namespace Reproductor
         private int cantidadMuestrasBorradas = 0;
         private int cantidadMuestrasOffset = 0;
 
-        public bool Activo
-        {
-            get;set;
-        }
-
         private int offsetMilisegundos;
         public int OffsetMilisegundos
         {
@@ -35,6 +30,17 @@ namespace Reproductor
             }
         }
 
+        public bool Activo
+        {
+            get; set;
+        }
+
+        public float Ganancia
+        {
+            get;
+            set;
+        }
+
         private ISampleProvider fuente;
 
         private List<float> bufferDelay = new List<float>();
@@ -46,7 +52,7 @@ namespace Reproductor
             duracionBufferSegundos = 10;
 
             // Buffer   =         Muestras por segundo * Tiempo en segundos
-            tamañoBuffer = fuente.WaveFormat.SampleRate * duracionBufferSegundos; ;
+            tamañoBuffer = fuente.WaveFormat.SampleRate * duracionBufferSegundos;
         }
 
         // El WaveFormat conlleva: Bit Depth, Sample Rate y Channels
@@ -89,14 +95,14 @@ namespace Reproductor
                 cantidadMuestrasBorradas += diferencia;
             }
 
-            if (Activo == true)
+            if (Activo)
             {
                 // Aplicación del efecto
                 if (milisegundosTranscurridos > offsetMilisegundos)
                 {
                     for (int i = 0; i < read; i++)
                     {
-                        buffer[offset + i] += bufferDelay[cantidadMuestrasTranscurridas - cantidadMuestrasBorradas + i - cantidadMuestrasOffset];
+                        buffer[offset + i] += bufferDelay[cantidadMuestrasTranscurridas - cantidadMuestrasBorradas + i - cantidadMuestrasOffset] * Ganancia;
                     }
                 }
             }

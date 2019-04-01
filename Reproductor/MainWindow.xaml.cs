@@ -105,6 +105,8 @@ namespace Reproductor
                     
                     delay = new Delay(reader);
 
+                    delay.Ganancia = (float)sld_Gain_Cantidad.Value;
+
                     delay.OffsetMilisegundos = (int)sld_Delay_Offset.Value;
 
                     if(sld_Delay_Offset.IsEnabled == true)
@@ -118,6 +120,9 @@ namespace Reproductor
                     fadingOut = false;
 
                     output = new WaveOutEvent();
+
+                    // Mientras más alta sea la latencia, más info se podrá almacenar en el búffer, a costa de que éste tardará un poco más (la 1ra vez) en llenarse 
+                    output.DesiredLatency = 150; // 150 ms
 
                     output.DeviceNumber = cb_Salida.SelectedIndex;
 
@@ -249,7 +254,11 @@ namespace Reproductor
         // Slider Gain (Applies Changes to the label)
         private void sld_Gain_Cantidad_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            lbl_Gain_Cantidad.Text = ((float)(sld_Gain_Cantidad.Value)).ToString("F");
+            if(lbl_Delay != null)
+                lbl_Gain_Cantidad.Text = ((float)(sld_Gain_Cantidad.Value)).ToString("F");
+
+            if (delay != null)
+                delay.Ganancia = (float)sld_Gain_Cantidad.Value;
         }
     }
 }
