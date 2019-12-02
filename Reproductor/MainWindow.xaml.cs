@@ -141,6 +141,9 @@ namespace Reproductor
                     btn_Detener.IsEnabled = true;
                     btn_Reproducir.IsEnabled = false;
                     btn_Elegir_Archivo.IsEnabled = false;
+                    cb_Salida.IsHitTestVisible = false;
+                    cb_Salida.IsEditable = false;
+                    cb_Salida.Focusable = false;
 
                     lbl_Tiempo_Total.Text = reader.TotalTime.ToString().Substring(0, 8);
                     lbl_Tiempo_Actual.Text = reader.CurrentTime.ToString().Substring(0, 8);
@@ -181,6 +184,8 @@ namespace Reproductor
             sld_Reproduccion.Value = 0;
             lbl_Tiempo_Actual.Text = "00:00";
             lbl_Tiempo_Total.Text = "00:00";
+            cb_Salida.IsHitTestVisible = true;
+            cb_Salida.Focusable = true;
         }
 
         // Time Function al Detener
